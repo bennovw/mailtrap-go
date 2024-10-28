@@ -1,3 +1,3 @@
-module mailtrap-go
+module github.com/bennovw/mailtrap-go
 
 go 1.21
