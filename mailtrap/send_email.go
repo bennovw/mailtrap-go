@@ -47,7 +47,7 @@ type EmailAddress struct {
 	Name  string `json:"name"`
 }
 
-// EmailAttachment represents an email attacments.
+// EmailAttachment represents an email attachment.
 type EmailAttachment struct {
 	// The Base64 encoded content of the attachment.
 	// required
