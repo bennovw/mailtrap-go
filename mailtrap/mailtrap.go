@@ -10,10 +10,11 @@ import (
 	"net/http"
 	"net/url"
 	"runtime"
+	"time"
 )
 
 const (
-	libVersion = "0.1.0"
+	libVersion = "0.1.1"
 
 	testingAPIURL = "https://mailtrap.io/"
 	sendingAPIURL = "https://send.api.mailtrap.io/"
@@ -71,7 +72,9 @@ func NewSendingClient(apiKey string) (*SendingClient, error) {
 		client{
 			apiKey:     apiKey,
 			baseURL:    baseURL,
-			httpClient: http.DefaultClient,
+			httpClient: &http.Client{
+				Timeout: 30 * time.Second,
+			},
 			userAgent:  userAgent,
 		},
 	}
