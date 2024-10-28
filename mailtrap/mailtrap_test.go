@@ -3,7 +3,7 @@ package mailtrap
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -148,7 +148,7 @@ func TestNewRequest(t *testing.T) {
 		t.Errorf("NewRequest(%v) URL = %v, expected %v", inURL, req.URL, outURL)
 	}
 
-	body, _ := ioutil.ReadAll(req.Body)
+	body, _ := io.ReadAll(req.Body)
 	if strings.TrimSpace(string(body)) != outBody {
 		t.Errorf("NewRequest(%v) Body = %v, expected %v", inBody, strings.TrimSpace(string(body)), outBody)
 	}
