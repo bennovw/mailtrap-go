@@ -1,3 +1,3 @@
-module github.com/vorobeyme/mailtrap-go
+module mailtrap-go
 
-go 1.18
+go 1.21

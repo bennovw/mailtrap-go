@@ -11,7 +11,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/vorobeyme/mailtrap-go/mailtrap"
+	"mailtrap-go/mailtrap"
 )
 
 func main() {
