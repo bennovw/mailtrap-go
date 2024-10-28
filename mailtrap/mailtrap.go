@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"runtime"
@@ -142,7 +141,7 @@ func (c *client) decode(v interface{}, body io.Reader, acceptHeader string) erro
 		return nil
 	}
 	if s, ok := v.(*string); ok {
-		data, err := ioutil.ReadAll(body)
+		data, err := io.ReadAll(body)
 		if err != nil {
 			return err
 		}
@@ -212,7 +211,7 @@ func checkResponse(r *http.Response) error {
 		return nil
 	}
 	errResponse := &ErrorResponse{Response: r}
-	data, err := ioutil.ReadAll(r.Body)
+	data, err := io.ReadAll(r.Body)
 	if err == nil && len(data) > 0 {
 		err := json.Unmarshal(data, errResponse)
 		if err != nil {
