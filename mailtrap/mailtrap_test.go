@@ -27,7 +27,7 @@ func setupTestingClient() (client *TestingClient, mux *http.ServeMux, teardown f
 func setupSendingClient() (client *SendingClient, mux *http.ServeMux, teardown func()) {
 	mux = http.NewServeMux()
 	server := httptest.NewServer(mux)
-	client, _ = NewSendingClient("api-token")
+	client, _ = NewSendingClient("api-token", false)
 	url, _ := url.Parse(server.URL)
 	client.baseURL = url
 
@@ -95,7 +95,7 @@ func TestNewSendingClient(t *testing.T) {
 	apiKey := "api-token"
 	expectedBaseURL := sendingAPIURL + apiSuffix
 
-	c, err := NewSendingClient(apiKey)
+	c, err := NewSendingClient(apiKey, false)
 	if err != nil {
 		t.Errorf("Sending client returned error: %v", err)
 	}
