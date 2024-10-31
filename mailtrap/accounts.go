@@ -21,7 +21,7 @@ type Account struct {
 
 // List returns a list of Mailtrap accounts.
 //
-// See https://api-docs.mailtrap.io/docs/mailtrap-api-docs/4cfa4c61eae3c-get-all-accounts
+// See https://api-docs.mailtrap.io/docs/mailtrap-api-docs/d26921ca2a48f-get-all-accounts
 func (s *AccountsService) List() ([]*Account, *Response, error) {
 	req, err := s.client.NewRequest(http.MethodGet, "/accounts", nil)
 	if err != nil {

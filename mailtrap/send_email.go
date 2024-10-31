@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"net/url"
 	"strings"
 )
 
@@ -80,10 +81,15 @@ type SendEmailResponse struct {
 	MessageIDs []string `json:"message_ids"`
 }
 
+// ProductionSendingClient manages communication with the Mailtrap sending API.
+type ProductionSendingClient struct {
+	client
+}
+
 // Send email
 //
 // See: https://api-docs.mailtrap.io/docs/mailtrap-api-docs/67f1d70aeb62c-send-email
-func (sc *SendingClient) Send(request *SendEmailRequest) (*SendEmailResponse, *Response, error) {
+func (sc *ProductionSendingClient) Send(request *SendEmailRequest) (*SendEmailResponse, *Response, error) {
 	if request == nil {
 		return nil, nil, errors.New("request `SendEmailRequest` is mandatory")
 	}
@@ -104,6 +110,46 @@ func (sc *SendingClient) Send(request *SendEmailRequest) (*SendEmailResponse, *R
 	}
 
 	return response, res, err
+}
+
+func (sc *ProductionSendingClient) setBaseURL(u *url.URL) {
+	sc.baseURL = u
+}
+
+// SandboxSendingClient manages communication with the Mailtrap sandbox API.
+type SandboxSendingClient struct {
+	client
+	inboxID int64
+}
+
+// Send email
+//
+// See: https://api-docs.mailtrap.io/docs/mailtrap-api-docs/bcf61cdc1547e-send-email-including-templates
+func (sc *SandboxSendingClient) Send(request *SendEmailRequest) (*SendEmailResponse, *Response, error) {
+	if request == nil {
+		return nil, nil, errors.New("request `SendEmailRequest` is mandatory")
+	}
+
+	if err := request.validate(); err != nil {
+		return nil, nil, err
+	}
+
+	req, err := sc.NewRequest(http.MethodPost, fmt.Sprintf("/send/%v", sc.inboxID), request)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	response := new(SendEmailResponse)
+	res, err := sc.Do(req, response)
+	if err != nil {
+		return nil, res, err
+	}
+
+	return response, res, err
+}
+
+func (sc *SandboxSendingClient) setBaseURL(u *url.URL) {
+	sc.baseURL = u
 }
 
 // Send email request validation
