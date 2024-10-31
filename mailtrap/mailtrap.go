@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	libVersion = "0.1.1"
+	libVersion = "0.1.2"
 
 	testingAPIURL = "https://mailtrap.io/"
 	sendingAPIURL = "https://send.api.mailtrap.io/"
