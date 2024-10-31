@@ -10,17 +10,16 @@ Unofficial Mailtrap API client for Go.
 
 The public API documentation is available at [https://api-docs.mailtrap.io](https://api-docs.mailtrap.io/docs/mailtrap-api-docs).
 
-**NOTE: THIS PACKAGE IS STILL UNDER DEVELOPMENT.**
 
 ## Installation
 ```
-go get github.com/vorobeyme/mailtrap-go
+go get github.com/bennovw/mailtrap-go
 ```
 
 ## Usage
 
 ```go
-import "github.com/vorobeyme/mailtrap-go"
+import "github.com/bennovw/mailtrap-go"
 ```
 
 Create a new Mailtrap client, then use the exposed services to access different parts of the Mailtrap API.
@@ -31,10 +30,11 @@ package main
 import (
     "log"
 
-    "github.com/vorobeyme/mailtrap-go"
+    "github.com/bennovw/mailtrap-go"
 )
 
 func main() {
+    // Production Mailtrap client
     client, err := mailtrap.NewSendingClient("api-token")
     if err != nil {
         log.Fatal(err)
@@ -42,6 +42,13 @@ func main() {
 
     email := &mailtrap.SendEmailRequest{ ... }
     resp, _, err := client.SendEmail.Send(email)
+
+    // Sandbox Mailtrap client (for testing)
+    sandboxClient, err := mailtrap.NewSandboxSendingClient("api-token", "000001")
+    if err != nil {
+        log.Fatal(err)
+    }
+    resp, _, err := sandboxClient.SendEmail.Send(email)
 }
 ```
 
