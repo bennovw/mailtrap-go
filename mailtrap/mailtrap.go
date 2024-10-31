@@ -17,7 +17,9 @@ const (
 
 	testingAPIURL = "https://mailtrap.io/"
 	sendingAPIURL = "https://send.api.mailtrap.io/"
-	apiSuffix     = "api"
+	sandboxAPIURL = "https://sandbox.api.mailtrap.io/"
+
+	apiSuffix = "api"
 
 	defaultAccept = "application/json"
 )
@@ -40,9 +42,14 @@ type client struct {
 	httpClient *http.Client
 }
 
-// SendingClient manages communication with the Mailtrap sending API.
-type SendingClient struct {
-	client
+// SendingClient is an interface for managing communication with the Mailtrap send and sandbox APIs.
+type SendingClient interface {
+	Send(request *SendEmailRequest) (*SendEmailResponse, *Response, error)
+	NewRequest(method, path string, body interface{}) (*http.Request, error)
+	Do(req *http.Request, v interface{}) (*Response, error)
+
+	// setBaseURL sets the base URL for the API client and is used by internal tests.
+	setBaseURL(*url.URL)
 }
 
 // TestingClient manages communication with the Mailtrap testing API.
@@ -59,26 +66,51 @@ type TestingClient struct {
 	Attachments  *AttachmentsService
 }
 
-// NewSendingClient creates and returns an instance of SendingClient.
-func NewSendingClient(apiKey string) (*SendingClient, error) {
-	baseURL, err := url.Parse(sendingAPIURL)
+// NewSendingClient creates and returns a production instance of SendingClient.
+func NewSendingClient(apiKey string) (SendingClient, error) {
+	client, err := getClient(apiKey, sendingAPIURL)
 	if err != nil {
 		return nil, err
 	}
-	baseURL.Path += apiSuffix
 
-	client := &SendingClient{
-		client{
-			apiKey:     apiKey,
-			baseURL:    baseURL,
-			httpClient: &http.Client{
-				Timeout: 30 * time.Second,
-			},
-			userAgent:  userAgent,
-		},
+	sc := &ProductionSendingClient{
+		client,
 	}
 
-	return client, nil
+	return sc, nil
+}
+
+// NewSendingClient creates and returns a sandbox instance of SendingClient for development and testing.
+func NewSandboxSendingClient(apiKey string, inboxID int64) (SendingClient, error) {
+	client, err := getClient(apiKey, sandboxAPIURL)
+	if err != nil {
+		return nil, err
+	}
+
+	sc := &SandboxSendingClient{
+		client:  client,
+		inboxID: inboxID,
+	}
+
+	return sc, nil
+}
+
+// getClient returns a new client instance with the given API key and base URL.
+func getClient(apiKey string, baseURL string) (client, error) {
+	u, err := url.Parse(baseURL)
+	if err != nil {
+		return client{}, err
+	}
+	u.Path += apiSuffix
+
+	return client{
+		apiKey:  apiKey,
+		baseURL: u,
+		httpClient: &http.Client{
+			Timeout: 30 * time.Second,
+		},
+		userAgent: userAgent,
+	}, nil
 }
 
 // NewTestingClient creates and returns an instance of TestingClient.

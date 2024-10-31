@@ -24,12 +24,12 @@ func setupTestingClient() (client *TestingClient, mux *http.ServeMux, teardown f
 }
 
 // setupSendingClient sets up a test HTTP server for sending API client.
-func setupSendingClient() (client *SendingClient, mux *http.ServeMux, teardown func()) {
+func setupSendingClient() (client SendingClient, mux *http.ServeMux, teardown func()) {
 	mux = http.NewServeMux()
 	server := httptest.NewServer(mux)
 	client, _ = NewSendingClient("api-token")
 	url, _ := url.Parse(server.URL)
-	client.baseURL = url
+	client.setBaseURL(url)
 
 	return client, mux, server.Close
 }
@@ -95,9 +95,15 @@ func TestNewSendingClient(t *testing.T) {
 	apiKey := "api-token"
 	expectedBaseURL := sendingAPIURL + apiSuffix
 
-	c, err := NewSendingClient(apiKey)
+	sc, err := NewSendingClient(apiKey)
 	if err != nil {
 		t.Errorf("Sending client returned error: %v", err)
+	}
+
+	// assert that the underlying type is ProductionSendingClient
+	c, ok := sc.(*ProductionSendingClient);
+	if !ok {
+		t.Errorf("Sending client is %T, want ProductionSendingClient", c)
 	}
 
 	if c.apiKey != apiKey {

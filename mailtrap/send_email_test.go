@@ -92,10 +92,16 @@ func TestSendEmailService_Send(t *testing.T) {
 		t.Error("SendEmail.Send bad request, err = nil, want error")
 	}
 
-	testNewRequestAndDoFail(t, "SendEmail.Send", &client.client, func() (*Response, error) {
+	// Assert that the client is ProductionSendingClient type to access its internal fields
+	c, ok := client.(*ProductionSendingClient);
+	if !ok {
+		t.Errorf("SendEmail.Send sc is not ProductionSendingClient")
+	}
+
+	testNewRequestAndDoFail(t, "SendEmail.Send", &c.client, func() (*Response, error) {
 		deliveredEmailIDs, resp, err := client.Send(email)
 		if deliveredEmailIDs != nil {
-			t.Errorf("SendEmail.Send client.BaseURL.Host=%v sendEmailResp=%#v, want nil", client.baseURL.Host, deliveredEmailIDs)
+			t.Errorf("SendEmail.Send client.BaseURL.Host=%v sendEmailResp=%#v, want nil", c.baseURL.Host, deliveredEmailIDs)
 		}
 		return resp, err
 	})
@@ -161,7 +167,7 @@ func TestSendEmailService_Send_missedSubject(t *testing.T) {
 	}
 }
 
-func TestSendEmailService_Send_textOrHTMLReqired(t *testing.T) {
+func TestSendEmailService_Send_textOrHTMLRequired(t *testing.T) {
 	client, _, teardown := setupSendingClient()
 	defer teardown()
 
