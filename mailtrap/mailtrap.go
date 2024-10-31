@@ -13,11 +13,10 @@ import (
 )
 
 const (
-	libVersion = "0.1.2"
+	libVersion = "0.1.1"
 
 	testingAPIURL = "https://mailtrap.io/"
 	sendingAPIURL = "https://send.api.mailtrap.io/"
-	sandboxAPIURL = "https://sandbox.api.mailtrap.io/"
 	apiSuffix     = "api"
 
 	defaultAccept = "application/json"
@@ -60,22 +59,14 @@ type TestingClient struct {
 	Attachments  *AttachmentsService
 }
 
-// NewSendingClient creates and returns an instance of SendingClient with the given API key. 
-// Enable sandboxMode to use the Mailtrap sandbox API for development and testing, the final email will be visible in the Mailtrap Email Testing console without being delivered.
-func NewSendingClient(apiKey string, sandboxMode bool) (*SendingClient, error) {
-	var baseURL *url.URL
-	var err error
-
-	if sandboxMode {
-		baseURL, err = url.Parse(sandboxAPIURL)
-	} else {
-		baseURL, err = url.Parse(sendingAPIURL)
-	}
+// NewSendingClient creates and returns an instance of SendingClient.
+func NewSendingClient(apiKey string) (*SendingClient, error) {
+	baseURL, err := url.Parse(sendingAPIURL)
 	if err != nil {
 		return nil, err
 	}
-
 	baseURL.Path += apiSuffix
+
 	client := &SendingClient{
 		client{
 			apiKey:     apiKey,
