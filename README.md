@@ -13,13 +13,13 @@ The public API documentation is available at [https://api-docs.mailtrap.io](http
 
 ## Installation
 ```
-go get github.com/bennovw/mailtrap-go
+go get github.com/vorobeyme/mailtrap-go
 ```
 
 ## Usage
 
 ```go
-import "github.com/bennovw/mailtrap-go"
+import "github.com/vorobeyme/mailtrap-go"
 ```
 
 Create a new Mailtrap client, then use the exposed services to access different parts of the Mailtrap API.
@@ -30,7 +30,7 @@ package main
 import (
     "log"
 
-    "github.com/bennovw/mailtrap-go"
+    "github.com/vorobeyme/mailtrap-go"
 )
 
 func main() {

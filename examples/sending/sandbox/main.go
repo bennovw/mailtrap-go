@@ -12,7 +12,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/bennovw/mailtrap-go/mailtrap"
+	"github.com/vorobeyme/mailtrap-go/mailtrap"
 )
 
 func main() {
