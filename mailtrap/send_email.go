@@ -112,7 +112,7 @@ func (sc *ProductionSendingClient) Send(request *SendEmailRequest) (*SendEmailRe
 	return response, res, err
 }
 
-func (sc *ProductionSendingClient) setBaseURL(u *url.URL) {
+func (sc *ProductionSendingClient) setBaseURL(u url.URL) {
 	sc.baseURL = u
 }
 
@@ -148,7 +148,7 @@ func (sc *SandboxSendingClient) Send(request *SendEmailRequest) (*SendEmailRespo
 	return response, res, err
 }
 
-func (sc *SandboxSendingClient) setBaseURL(u *url.URL) {
+func (sc *SandboxSendingClient) setBaseURL(u url.URL) {
 	sc.baseURL = u
 }
 
