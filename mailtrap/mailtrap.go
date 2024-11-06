@@ -33,7 +33,7 @@ type client struct {
 	apiKey string
 
 	// Base URL for API requests.
-	baseURL *url.URL
+	baseURL url.URL
 
 	// User agent used when communicating with the API.
 	userAgent string
@@ -49,7 +49,7 @@ type SendingClient interface {
 	Do(req *http.Request, v interface{}) (*Response, error)
 
 	// setBaseURL sets the base URL for the API client and is used by internal tests.
-	setBaseURL(*url.URL)
+	setBaseURL(url.URL)
 }
 
 // TestingClient manages communication with the Mailtrap testing API.
@@ -105,7 +105,7 @@ func getClient(apiKey string, baseURL string) (client, error) {
 
 	return client{
 		apiKey:  apiKey,
-		baseURL: u,
+		baseURL: *u,
 		httpClient: &http.Client{
 			Timeout: 30 * time.Second,
 		},
@@ -124,7 +124,7 @@ func NewTestingClient(apiKey string) (*TestingClient, error) {
 	client := &TestingClient{
 		client: client{
 			apiKey:     apiKey,
-			baseURL:    baseURL,
+			baseURL:    *baseURL,
 			httpClient: http.DefaultClient,
 			userAgent:  userAgent,
 		},

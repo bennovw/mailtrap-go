@@ -18,7 +18,7 @@ func setupTestingClient() (client *TestingClient, mux *http.ServeMux, teardown f
 	server := httptest.NewServer(mux)
 	client, _ = NewTestingClient("api-token")
 	url, _ := url.Parse(server.URL)
-	client.baseURL = url
+	client.baseURL = *url
 
 	return client, mux, server.Close
 }
@@ -28,8 +28,12 @@ func setupSendingClient() (client SendingClient, mux *http.ServeMux, teardown fu
 	mux = http.NewServeMux()
 	server := httptest.NewServer(mux)
 	client, _ = NewSendingClient("api-token")
-	url, _ := url.Parse(server.URL)
-	client.setBaseURL(url)
+	url, err := url.Parse(server.URL)
+	if err != nil {
+		panic(err)
+	}
+	
+	client.setBaseURL(*url)
 
 	return client, mux, server.Close
 }
